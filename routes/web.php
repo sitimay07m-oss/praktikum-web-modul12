@@ -3,14 +3,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\Auth\LoginController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/login', [LoginController::class, 'show'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.proses');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
+Route::get('/login', [LoginController::class,'show'])->name('login');
+Route::post('/login', [LoginController::class,'login'])->name('login.proses');
+Route::post('/logout', [LoginController::class,'logout'])->name('logout');
 Route::middleware(['auth', \App\Http\Middleware\NoCache::class])->group(function () {
-    Route::resource('buku', BukuController::class)->except('show');
+   Route::get('/buku', [BukuController::class,'index'])->name('buku.index');
+   Route::middleware('can:kelola-buku')->group(function () {
+      Route::resource('buku', BukuController::class)->except(['index','show']);
+   });
 });
